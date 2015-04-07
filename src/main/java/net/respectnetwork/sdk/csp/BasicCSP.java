@@ -1018,7 +1018,7 @@ public class BasicCSP implements CSP {
 
         this.prepareMessageToCSP(message);
         printMessage(messageEnvelope);
-        // this.getXdiClientCSPRegistry().send(messageEnvelope, null);
+        this.getXdiClientCSPRegistry().send(messageEnvelope, null);
 
         // done
 
