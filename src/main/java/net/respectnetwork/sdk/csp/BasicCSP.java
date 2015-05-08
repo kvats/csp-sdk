@@ -315,42 +315,33 @@ public class BasicCSP implements CSP {
         log.debug("checkPhoneAndEmailAvailableInRN :: Message to RN "
                 + messageEnvelope.getGraph().toString());
         printMessage(messageEnvelope);
-        MessageResult messageResult = null;/*
-                                            * this.getXdiClientRNRegistrationService
-                                            * () .send(messageEnvelope, null);
-                                            * 
-                                            * Relation relation1 =
-                                            * targetAddress1 == null ? null :
-                                            * messageResult
-                                            * .getGraph().getDeepRelation
-                                            * (targetAddress1, XRI_S_IS_PHONE);
-                                            * Relation relation2 =
-                                            * targetAddress2 == null ? null :
-                                            * messageResult
-                                            * .getGraph().getDeepRelation
-                                            * (targetAddress2, XRI_S_IS_EMAIL);
-                                            * 
-                                            * if (relation1 != null) {
-                                            * 
-                                            * cloudNumbers[0] =
-                                            * CloudNumber.fromXri(relation1
-                                            * .getTargetContextNodeXri()); }
-                                            * 
-                                            * if (relation2 != null) {
-                                            * 
-                                            * cloudNumbers[1] =
-                                            * CloudNumber.fromXri(relation2
-                                            * .getTargetContextNodeXri()); }
-                                            * 
-                                            * // done
-                                            * 
-                                            * log.debug("In RN: For verified phone "
-                                            * + verifiedPhone +
-                                            * " and verified email " +
-                                            * verifiedEmail +
-                                            * " found Cloud Numbers " +
-                                            * Arrays.asList(cloudNumbers));
-                                            */
+        MessageResult messageResult = null;
+        this.getXdiClientRNRegistrationService().send(messageEnvelope, null);
+
+        Relation relation1 = targetAddress1 == null ? null : messageResult
+                .getGraph().getDeepRelation(targetAddress1, XRI_S_IS_PHONE);
+        Relation relation2 = targetAddress2 == null ? null : messageResult
+                .getGraph().getDeepRelation(targetAddress2, XRI_S_IS_EMAIL);
+
+        if (relation1 != null) {
+
+            cloudNumbers[0] = CloudNumber.fromXri(relation1
+                    .getTargetContextNodeXri());
+        }
+
+        if (relation2 != null) {
+
+            cloudNumbers[1] = CloudNumber.fromXri(relation2
+                    .getTargetContextNodeXri());
+        }
+
+        // done
+
+        log.debug("In RN: For verified phone " + verifiedPhone
+                + " and verified email " + verifiedEmail
+                + " found Cloud Numbers " +
+                                             Arrays.asList(cloudNumbers));
+
         return cloudNumbers;
     }
 
@@ -512,44 +503,28 @@ public class BasicCSP implements CSP {
         log.debug("registerCloudNameInRN :: Message "
                 + messageEnvelope.getGraph().toString());
         printMessage(messageEnvelope);
-        MessageResult messageResult = null;/*
-                                            * this.getXdiClientRNRegistrationService
-                                            * () .send(messageEnvelope, null);
-                                            * 
-                                            * log.debug(
-                                            * "registerCloudNameInRN :: Message Response "
-                                            * +
-                                            * messageResult.getGraph().toString
-                                            * ()); Relation relation =
-                                            * messageResult
-                                            * .getGraph().getDeepRelation(
-                                            * XDI3Segment
-                                            * .fromComponent(cloudName
-                                            * .getPeerRootXri()),
-                                            * XDIDictionaryConstants.XRI_S_REF);
-                                            * if (relation == null) throw new
-                                            * RuntimeException
-                                            * ("Cloud Name not registered.");
-                                            * 
-                                            * CloudNumber registeredCloudNumber
-                                            * = CloudNumber
-                                            * .fromPeerRootXri(relation
-                                            * .getTargetContextNodeXri()); if
-                                            * (!registeredCloudNumber
-                                            * .equals(cloudNumber)) throw new
-                                            * RuntimeException
-                                            * ("Registered Cloud Number " +
-                                            * registeredCloudNumber +
-                                            * " does not match requested Cloud Number "
-                                            * + cloudNumber);
-                                            * 
-                                            * // done
-                                            * 
-                                            * log.debug("In RN: Cloud Name " +
-                                            * cloudName +
-                                            * " registered with Cloud Number " +
-                                            * cloudNumber);
-                                            */
+        MessageResult messageResult = null;
+        this.getXdiClientRNRegistrationService().send(messageEnvelope, null);
+
+        log.debug("registerCloudNameInRN :: Message Response "
+                + messageResult.getGraph().toString());
+        Relation relation = messageResult.getGraph().getDeepRelation(
+                XDI3Segment.fromComponent(cloudName.getPeerRootXri()),
+                XDIDictionaryConstants.XRI_S_REF);
+        if (relation == null)
+            throw new RuntimeException("Cloud Name not registered.");
+
+        CloudNumber registeredCloudNumber = CloudNumber
+                .fromPeerRootXri(relation.getTargetContextNodeXri());
+        if (!registeredCloudNumber.equals(cloudNumber))
+            throw new RuntimeException("Registered Cloud Number "
+                    + registeredCloudNumber
+                    + " does not match requested Cloud Number " + cloudNumber);
+
+        // done
+
+        log.debug("In RN: Cloud Name " + cloudName
+                + " registered with Cloud Number " + cloudNumber);
     }
 
     @Override
@@ -845,7 +820,7 @@ public class BasicCSP implements CSP {
         log.debug("setRespectNetworkMembershipInRN :: Message  "
                 + messageEnvelope.getGraph().toString());
         printMessage(messageEnvelope);
-        // this.getXdiClientRNRegistrationService().send(messageEnvelope, null);
+        this.getXdiClientRNRegistrationService().send(messageEnvelope, null);
 
         // done
 
@@ -911,7 +886,7 @@ public class BasicCSP implements CSP {
         // send message
 
         this.prepareMessageToRN(message);
-        // this.getXdiClientRNRegistrationService().send(messageEnvelope, null);
+        this.getXdiClientRNRegistrationService().send(messageEnvelope, null);
 
         // done
 
@@ -1649,6 +1624,52 @@ public class BasicCSP implements CSP {
                         new MappingCloudNumberIterator(
                                 new MappingRelationTargetContextNodeXriIterator(
                                         relations)))).array(CloudNumber.class);
+
+        if (theDependencies != null && theDependencies.length == 0) {
+            theDependencies = null;
+        }
+
+        // done
+        log.debug("In CSP Cloud: Getting dependencies of "
+                + guardian.toString());
+
+        return theDependencies;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CloudName[] getMyDependentCloudNamesInCSP(CloudNumber guardian) throws Xdi2ClientException {
+
+        // Prepare message to Guardian Sub Graph in CSP Graph
+
+        MessageEnvelope messageEnvelope = new MessageEnvelope();
+        MessageCollection messageCollection = this
+                .createMessageCollectionToCSP(messageEnvelope);
+        Message message = messageCollection.createMessage();
+
+        XDI3Statement targetStatementGet = XDI3Statement
+                .fromRelationComponents(guardian.getXri(), XRI_S_IS_GUARDIAN,
+                        XDIConstants.XRI_S_VARIABLE);
+
+        message.createGetOperation(targetStatementGet);
+
+        // send message and read results
+
+        this.prepareMessageToCSP(message);
+
+        MessageResult messageResult = this.getXdiClientCSPRegistry().send(
+                messageEnvelope, null);
+
+        ReadOnlyIterator<Relation> relations = messageResult.getGraph()
+                .getDeepRelations(guardian.getXri(), XRI_S_IS_GUARDIAN);
+
+        CloudName[] theDependencies = new IteratorArrayMaker<CloudName>(
+                new NotNullIterator<CloudName>(
+                        new MappingCloudNameIterator(
+                                new MappingRelationTargetContextNodeXriIterator(
+                                        relations)))).array(CloudName.class);
 
         if (theDependencies != null && theDependencies.length == 0) {
             theDependencies = null;
