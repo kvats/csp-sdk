@@ -429,8 +429,7 @@ public class BasicCSP implements CSP {
 
         log.debug("registerCloudNameInRN :: Message " + messageEnvelope.getGraph().toString());
         printMessage(messageEnvelope);
-        MessageResult messageResult = null;
-        this.getXdiClientRNRegistrationService().send(messageEnvelope, null);
+        MessageResult messageResult = this.getXdiClientRNRegistrationService().send(messageEnvelope, null);
 
         log.debug("registerCloudNameInRN :: Message Response " + messageResult.getGraph().toString());
         Relation relation = messageResult.getGraph().getDeepRelation(
