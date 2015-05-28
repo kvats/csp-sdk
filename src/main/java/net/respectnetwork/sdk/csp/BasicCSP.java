@@ -1256,7 +1256,7 @@ public class BasicCSP implements CSP {
         PolicyUtil.createSignatureValidOperator(policy);
 
         linkContract.setPermissionTargetAddress(XDILinkContractConstants.XRI_S_ALL,
-                XDI3Util.concatXris(dependent.getXri(), XDI3Segment.create("")));
+                XDI3Util.concatXris(XDIConstants.XRI_S_ROOT));
 
         log.info("Sending following XDI data to child cloud: {}",
                 parentChildLinkContractGraph.toString("XDI DISPLAY", null));
